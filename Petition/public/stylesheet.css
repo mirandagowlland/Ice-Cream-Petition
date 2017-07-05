@@ -1,0 +1,60 @@
+* {
+    background-color: #EBF4FA;
+    font-family: 'Merriweather Sans', sans-serif;
+
+}
+
+#signature {
+    border: solid 2px grey;
+    margin-left:300px;
+}
+
+/** {
+    background-color:blue;
+    opacity:0.9;
+}*/
+
+h1 {
+    margin-left:470px;
+}
+div {
+    display:inline-block;
+    width:1500px;
+    margin-left:50px;
+    margin-right:50px;
+    position:relative;
+    left: 30%;
+
+}
+
+img {
+    max-height:300px;
+    max-width:300px;
+}
+
+h3 {
+    max-width:500px;
+    margin-left:-75px;
+    text-align:center;
+}
+
+a  {
+    margin-left: 500px;
+    cursor:pointer;
+}
+
+form {
+    margin-left:400px;
+}
+
+input {
+    margin:10px;
+    border-radius:5px;
+    font-size:16px;
+}
+
+#submit {
+    background-color:grey;
+    color:white;
+    border:solid 1px black;
+}
