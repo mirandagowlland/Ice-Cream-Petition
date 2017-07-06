@@ -58,3 +58,8 @@ input {
     color:white;
     border:solid 1px black;
 }
+
+li {
+    margin-left:500px;
+    text-decoration:none;
+}

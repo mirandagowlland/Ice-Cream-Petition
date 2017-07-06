@@ -11,7 +11,8 @@ $('#signature').on('mousedown', function(e){
         context.stroke();
     }).on('mouseup', function(){
         $('#signature').off('mousemove');
-        //$('#hidden').val(canvas.toDataURL());
-        console.log(canvas.toDataURL());
+        $('input[type="hidden"]').val(canvas.toDataURL());
+
+        console.log(canvas.toDataURL('image/png'));
     });
 })
