@@ -6,16 +6,11 @@
 
 #signature {
     border: solid 2px grey;
-    margin-left:300px;
+    margin-left:280px;
 }
 
-/** {
-    background-color:blue;
-    opacity:0.9;
-}*/
-
 h1 {
-    margin-left:470px;
+    margin-left:450px;
 }
 div {
     display:inline-block;
@@ -34,23 +29,29 @@ img {
 
 h3 {
     max-width:500px;
-    margin-left:-75px;
     text-align:center;
+    margin-left:300px;
+}
+
+h2 {
+    margin-left:300px;
+    color: #3f4245;
 }
 
 a  {
-    margin-left: 500px;
     cursor:pointer;
+
 }
 
 form {
-    margin-left:400px;
+    margin-left:330px;
 }
 
 input {
     margin:10px;
     border-radius:5px;
     font-size:16px;
+    color:grey;
 }
 
 #submit {
@@ -61,5 +62,13 @@ input {
 
 li {
     margin-left:500px;
-    text-decoration:none;
+    list-style: none;
+}
+
+#showSig {
+    width: 500px;
+    display:inline-block;
+    margin-left:300px;
+    border: solid 2px grey;
+    background-color:white;
 }

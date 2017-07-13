@@ -7,11 +7,13 @@ $('#signature').on('mousedown', function(e){
     e.preventDefault();
     context.moveTo(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
     $('#signature').on('mousemove', function(e){
+        context.lineWidth=2;
+        context.strokeStyle="#d942f4";
         context.lineTo(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
         context.stroke();
     }).on('mouseup', function(){
         $('#signature').off('mousemove');
-        $('input[type="hidden"]').val(canvas.toDataURL());
+        $('input[name="signature"]').val(canvas.toDataURL());
 
         console.log(canvas.toDataURL('image/png'));
     });
