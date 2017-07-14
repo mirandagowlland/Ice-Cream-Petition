@@ -1,51 +1,58 @@
 * {
     background-color: #EBF4FA;
-    font-family: 'Merriweather Sans', sans-serif;
+    font-family: 'Hind', sans-serif;
+}
 
+fieldset {
+    width:300px;
+    height:300px;
+    border-radius:5px;
 }
 
 #signature {
     border: solid 2px grey;
-    margin-left:280px;
+    margin-top:100px;
 }
 
 h1 {
-    margin-left:450px;
+    float:right;
 }
 div {
-    display:inline-block;
-    width:1500px;
-    margin-left:50px;
-    margin-right:50px;
-    position:relative;
-    left: 30%;
+    width:800px;
+    margin-left:200px;
 
+}
+
+#signed {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 img {
+    float:right;
     max-height:300px;
     max-width:300px;
+    margin-top:50px
 }
 
 h3 {
+    display:inline-block;
     max-width:500px;
     text-align:center;
-    margin-left:300px;
+    margin-top:-50px;
 }
 
 h2 {
-    margin-left:300px;
     color: #3f4245;
 }
 
 a  {
     cursor:pointer;
+    margin-top:10px;
 
 }
 
-form {
-    margin-left:330px;
-}
 
 input {
     margin:10px;
@@ -54,21 +61,25 @@ input {
     color:grey;
 }
 
-#submit {
+button {
     background-color:grey;
     color:white;
     border:solid 1px black;
+    cursor:pointer;
+    border-radius:5px;
 }
 
 li {
-    margin-left:500px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
     list-style: none;
+    padding:3px;
 }
 
 #showSig {
-    width: 500px;
+    margin-top:-10px;
     display:inline-block;
-    margin-left:300px;
     border: solid 2px grey;
     background-color:white;
 }

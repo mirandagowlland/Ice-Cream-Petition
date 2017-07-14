@@ -13,6 +13,8 @@ router.route ('/register')
     .get((req,res) => {
         res.render('register', {
             layout:'main',
+            heading:'Some text about the petition and its name to go here',
+            legend: 'Register your interest here',
             csrfToken:req.csrfToken()
         });
         console.log('csrf token', req.csrfToken());
@@ -60,6 +62,8 @@ router.route ('/login')
     .get((req,res) => {
         res.render('login', {
             layout:'main',
+            heading:'Some text about the petition and its name to go here',
+            legend: 'Log in here',
             csrfToken:req.csrfToken()
         });
     })
@@ -189,8 +193,6 @@ router.route ('/delete')
 router.route ('/petition')
 
     .get((req,res) =>  {
-        console.log('req session id', req.session.id);
-        console.log('req body id', req.body);
         if (req.session.id) {
             res.redirect('/signed');
         }
@@ -204,7 +206,7 @@ router.route ('/petition')
 
 //post signature details to database
     .post((req,res) =>  {
-        console.log(req.body);
+        console.log(req.body.signature);
         if (req.body.signature) {
             res.cookie('petition', 'signed');
             functions.addSignature(req.body, req.session.user.id)

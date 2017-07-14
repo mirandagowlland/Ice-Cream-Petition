@@ -1,9 +1,13 @@
-<h2>Thank you for signing our petition!</h2>
-<img id="showSig" src={{canvasSig}}>
 
+
+
+<div id="signed">
+    <h2>Thank you for signing our petition!</h2>
+    <img id="showSig" src={{canvasSig}}><br>
 <a href="/signatures"> VIEW {{sigCount}} SIGNATURES HERE</a><br>
 <a href="/profile/edit"> EDIT PROFILE</a><br>
 <a href="/delete"> DELETE SIGNATURE</a>
+</div>
 <form name="signed" method="post">
 <input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>
 </form>
