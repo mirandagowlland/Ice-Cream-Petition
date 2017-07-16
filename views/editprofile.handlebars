@@ -1,4 +1,6 @@
-<h2>Edit Your Profile</h2>
+<div>
+    {{>petitionInfo}}
+<h2>Edit Your Deets Here</h2>
 <form name="editprofile" method="post">
     <input name="firstname" value={{firstname}}>First Name</input><br>
     <input name="surname" value={{lastname}}>Last Name</input><br>
@@ -8,6 +10,7 @@
     <input name="city" value={{city}}>City</input><br>
     <input name="homepage" value={{homepage}}>Homepage</input><br>
     <input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>
-    <button id="continue" type="submit">Update</button>
+    <button id="button" type="submit">Update</button>
 </input>
 </form>
+</div>

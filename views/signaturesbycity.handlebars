@@ -1,12 +1,11 @@
 <ul>
     <img src="/public/thanks2.jpg" id="thanks">
-    <h2>These children and the signatories below thank you for your support for this important topic</h2>
-{{#each sigList}}
+    <h2>These children and the signatories below from the city of {{city}} thank you for your support for this important topic</h2>
+{{#each sigListCity}}
 <li>
     {{#if homepage}}<a href=http://{{homepage}} target="_blank">{{firstname}} {{lastname}}</a>
     {{else}} {{firstname}} {{lastname}}{{/if}}
     {{#if age}} ({{age}}) {{/if}}
-    {{#if city}}, <a href="/signatures/{{city}}"> {{city}} {{/if}}</a>
-</li><br>
+</li>
 {{/each}}
 </ul>

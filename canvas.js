@@ -7,8 +7,8 @@ $('#signature').on('mousedown', function(e){
     e.preventDefault();
     context.moveTo(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
     $('#signature').on('mousemove', function(e){
-        context.lineWidth=2;
-        context.strokeStyle="#d942f4";
+        context.lineWidth=3;
+        context.strokeStyle="#F29191";
         context.lineTo(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
         context.stroke();
     }).on('mouseup', function(){

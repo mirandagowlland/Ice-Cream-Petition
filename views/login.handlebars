@@ -2,7 +2,6 @@
     {{>petitionInfo}}
     <fieldset>
     <form name="login" method="post">
-        <legend>{{legend}}</legend>
         <input name="email" required>Email</input>
         <input type = "password" name="password" required>Password</input>
         <input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>

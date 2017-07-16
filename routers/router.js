@@ -1,11 +1,12 @@
 const express=require ('express');
 router= express.Router();
 const functions=require('../functions');
+const spicedPg=require('spiced-pg');
+const db=spicedPg(process.env.DATABASE_URL || 'postgres:postgres:postgres@localhost:5432/petition');
 //const csrf=require('csurf');
 //const app=express();
 
 //app.use(csrf());
-
 
 //registration page
 router.route ('/register')
@@ -13,11 +14,11 @@ router.route ('/register')
     .get((req,res) => {
         res.render('register', {
             layout:'main',
-            heading:'Some text about the petition and its name to go here',
-            legend: 'Register your interest here',
+            heading:'We care about access to ice cream in all its forms. So should you. Join our campaign to make ice cream free for all.',
+            legend: 'Register your passion for ice cream here',
             csrfToken:req.csrfToken()
         });
-        console.log('csrf token', req.csrfToken());
+        // console.log('csrf token', req.csrfToken());
     })
 
 
@@ -26,14 +27,13 @@ router.route ('/register')
         .then(function(hash){
             return functions.addUser(req.body, hash)
             .then(function(result) {
-                console.log('logging result', result.rows);
                 req.session.user = {
                     id:result.rows[0].id,
                     firstname:req.body.firstname,
                     lastname:req.body.surname,
-                    email:req.body.email
+                    email:req.body.email,
+                    signed:undefined
                 }
-                console.log('session user', req.session.user);
             })
         })
         .then(function(){
@@ -62,8 +62,7 @@ router.route ('/login')
     .get((req,res) => {
         res.render('login', {
             layout:'main',
-            heading:'Some text about the petition and its name to go here',
-            legend: 'Log in here',
+            heading:'We care about access to ice cream in all its forms. So should you. Join our campaign to make ice cream free for all.',
             csrfToken:req.csrfToken()
         });
     })
@@ -71,7 +70,6 @@ router.route ('/login')
     .post((req,res) =>  {
         functions.checkUser(req.body.email, req.body.password)
         .then(function(userInfo){
-            //console.log('app.post userInfo', userInfo);
             if(!userInfo) {
                 console.log('no match');
                 res.redirect('/register');
@@ -80,7 +78,7 @@ router.route ('/login')
                     id: userInfo.id,
                     firstname: userInfo.firstname,
                     lastname: userInfo.lastname,
-                    email: userInfo.email
+                    email: userInfo.email,
                 }
             }
         })
@@ -91,7 +89,7 @@ router.route ('/login')
             console.log('no match');
             res.render('login', {
                 layout:'main',
-                message: 'PASSWORD INCORRECT',
+                message: 'Login not recognised!',
                 csrfToken:req.csrfToken()
             });
             // }
@@ -110,32 +108,24 @@ router.route ('/profile')
     })
 
     .post ((req,res) =>  {
-        //console.log(req.session.user);
         if (!req.body.age && !req.body.city && !req.body.homepage) {
             res.redirect('/petition');
         }
         else {
-            var query = 'INSERT INTO profiles(age, city, homepage, user_id) VALUES($1, $2, $3, $4) RETURNING id';
-            var params = [req.body.age, req.body.city, req.body.homepage, req.session.user.id];
-            db.query(query, params)
+            functions.setProfile(req.body, req.session.user.id)
             .then(function(){
-                //req.session.user.age=req.body.age;
-                //req.session.user.city=req.body.city;
-                //req.session.user.homepage=req.body.homepage;
                 res.redirect('/petition');
             }).catch(function(err){
-                console.log(err);
+                console.log('err with post', err);
             })
         }
     })
 
+
 router.route ('/profile/edit')
 
     .get ((req,res) =>  {
-        console.log('log user info and req body', req.session.user, req.body);
-        // console.log('here is the session user info', req.session.user);
-        // console.log('here is the req body info', req.body);
-
+        //console.log('log user info and req body', req.session.user, req.body);
         functions.getUserInfo(req.session.user.id)
         .then (function(profileInfo) {
             res.render('editprofile', {
@@ -154,27 +144,16 @@ router.route ('/profile/edit')
     })
 
     .post((req,res) =>  {
-        console.log('log req body before update', req.body);
+        //console.log(profileInfo);
         if (!req.body.age.length) {
             req.body.age=null;
         };
-        var queryProfile = 'UPDATE profiles SET age=$1, city=$2, homepage=$3 WHERE user_id=$4';
-        var paramsProfile = [req.body.age, req.body.city,req.body.homepage,req.session.user.id];
-        var queryUser = 'UPDATE users SET firstname=$1, lastname=$2, email=$3 WHERE id=$4';
-        var paramsUser = [req.body.firstname, req.body.surname, req.body.email,req.session.user.id];
-
-        db.query(queryProfile, paramsProfile)
-        .then(function(){
-            db.query(queryUser, paramsUser)})
-            .then(function (){
-                if (res.cookie) {
-                    res.redirect('/signed')
-                } else {
-                res.redirect('/petition')
-                }
-            }).catch(function(err){
-                console.log(err)
-            })
+        functions.updateProfile(req.body, req.session.user.id)
+        if (res.cookie) {
+            res.redirect('/signed')
+        } else {
+            res.redirect('/petition')
+        }
     })
 
 //delete signature
@@ -193,12 +172,17 @@ router.route ('/delete')
 router.route ('/petition')
 
     .get((req,res) =>  {
-        if (req.session.id) {
+        console.log(req.session.user);
+        if (req.session.user.signed==true) {
             res.redirect('/signed');
         }
         else {
+            console.log('get', req.session.user.signed);
             res.render('input', {
                 layout:'main',
+                heading:'A world with free ice cream is within our grasp. Give us your support today to make it a reality.',
+                firstname:req.session.user.firstname,
+                lastname:req.session.user.lastname,
                 csrfToken:req.csrfToken()
             });
         }
@@ -206,8 +190,11 @@ router.route ('/petition')
 
 //post signature details to database
     .post((req,res) =>  {
-        console.log(req.body.signature);
+        //console.log(req.body.signature);
         if (req.body.signature) {
+            req.session.user.signed=true;
+            console.log('post full req session', req.session.user);
+            console.log('post', req.session.user.signed);
             res.cookie('petition', 'signed');
             functions.addSignature(req.body, req.session.user.id)
             .then(function(result){
@@ -220,7 +207,7 @@ router.route ('/petition')
                         csrfToken:req.csrfToken()
                     })
                 } else {
-                    console.log(err);
+                    console.log('err in posting petition sig', err);
                 }
             })
         }
@@ -230,18 +217,40 @@ router.route ('/petition')
 router.route ('/signed')
 
     .get((req,res) =>  {
+        //console.log('1', result.rows[0].signature);
         functions.displaySignature(req.session.user.id)
         .then(function(result){
+            console.log('pre countSigners result', result.rows[0].signature);
+            var signature=result.rows[0].signature
+            functions.countSigners()
+            .then(function(count){
+                 console.log('this is the restul', count);
+                 console.log('sig count', result.rows[0].count);
             res.render('signed', {
                 layout:'main',
-                sigCount:req.session.user.id,
+                heading:"You've bought us one step closer to free ice cream. Your belly thanks you.",
+                aside:'(though your doctor may not.)',
+                sigCount:count.rows[0].count,
                 canvasSig:result.rows[0].signature,
                 csrfToken:req.csrfToken()
-            });
+            })
         }).catch(function(err){
-            console.log(err);
-        });
-    });
+             console.log('there was an err with the get', err);
+         });
+    })
+        // .then(function(result){
+        //     res.render('signed', {
+        //         layout:'main',
+        //         heading:"You've bought us one step closer to free ice cream. Your belly thanks you.",
+        //         sigCount:req.session.user.id,
+        //         canvasSig:result.rows[0].signature,
+        //         csrfToken:req.csrfToken()
+        //     });
+        // }).catch(function(err){
+        //     console.log(err);
+        // });
+    })
+
 
 //view signature list
 router.route ('/signatures')
@@ -257,7 +266,30 @@ router.route ('/signatures')
         }).catch(function(err){
             console.log(err);
         });
-    });
+    })
+
+router.route ('/signatures/:city')
+
+    .get((req,res) => {
+        console.log('selected city', req.params)
+        return functions.getSignersByCity(req.params.city)
+        .then(function(signatures){
+            console.log('these are the sigs', signatures.rows)
+            res.render('signaturesbycity', {
+                layout:'main',
+                sigListCity:signatures.rows,
+                city:signatures.rows[0].city
+            });
+        })
+    })
+
+router.route ('/logout')
+
+    .get((req, res) => {
+            req.session = null;
+            res.redirect('/login');
+    })
+
 
 
 module.exports = router;

@@ -24,7 +24,7 @@ app.use(require('body-parser').urlencoded({
 }));
 
 app.use(csrf());
-app.use(router);
+
 
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
@@ -41,6 +41,7 @@ app.use('/public', express.static(__dirname + '/public'));
 app.use((req,res,next) => {
     if (!req.session.user) {
         if(req.url !='/register' && req.url != '/login') {
+            console.log('testing session');
             res.redirect('/register');
         } else {
             next();
@@ -53,5 +54,7 @@ app.use((req,res,next) => {
         }
     }
 });
+
+app.use(router);
 
 app.listen(process.env.PORT || 8080, () => console.log ('listening'));

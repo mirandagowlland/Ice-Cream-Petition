@@ -1,13 +1,11 @@
-
-
-
 <div id="signed">
-    <h2>Thank you for signing our petition!</h2>
+    {{>petitionInfo}}
     <img id="showSig" src={{canvasSig}}><br>
-<a href="/signatures"> VIEW {{sigCount}} SIGNATURES HERE</a><br>
-<a href="/profile/edit"> EDIT PROFILE</a><br>
-<a href="/delete"> DELETE SIGNATURE</a>
+    <a href="/signatures"> See {{sigCount}} signatures of other ice cream lovers here</a><br>
+    <a href="/profile/edit"> Edit your profile</a><br>
+    <a href="/delete"> Want to delete your signature?</a><br>
+    <a href="/logout"> Leaving us? Log out here</a><br>
 </div>
 <form name="signed" method="post">
-<input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>
+    <input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>
 </form>

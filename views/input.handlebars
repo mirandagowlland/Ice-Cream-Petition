@@ -1,9 +1,12 @@
+<div id = "input">
 {{>petitionInfo}}
-<canvas id="signature" width="400" height="100"></canvas>
+<h3>{{firstname}} {{lastname}}, please sign in the box below</h3>
+<canvas id="signature" width="450" height="100"></canvas>
 <form name="signPetition" method="post">
     <input type="hidden" name="signature">
     <input type = "hidden" name="_csrf" value ="{{csrfToken}}"></input>
-    <input id="submit" type="submit">
+    <button id="button" type="submit">Submit</button>
 
     </input>
 </form>
+</div>

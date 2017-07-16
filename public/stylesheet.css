@@ -1,85 +1,76 @@
 * {
     background-color: #EBF4FA;
-    font-family: 'Hind', sans-serif;
+    font-family: 'Gloria Hallelujah', cursive;
+    color: #3f4245;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    color:#735851;
 }
 
 fieldset {
     width:300px;
-    height:300px;
-    border-radius:5px;
+    border:none;
 }
 
 #signature {
-    border: solid 2px grey;
-    margin-top:100px;
+    border: dashed 1px #735851;
+    margin-top: 20px;
+    background-color: #F2E1AC;
 }
 
-h1 {
-    float:right;
-}
 div {
     width:800px;
-    margin-left:200px;
-
-}
-
-#signed {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
 }
 
 img {
-    float:right;
     max-height:300px;
     max-width:300px;
-    margin-top:50px
 }
 
-h3 {
-    display:inline-block;
-    max-width:500px;
-    text-align:center;
-    margin-top:-50px;
+#thanks {
+    border:1px solid #A68C6D;
+    box-shadow: inset 0 0 1em #F2E1AC, 0 0 1em #735851 ;
 }
 
 h2 {
-    color: #3f4245;
+    color: #735851;
+    text-align: center;
+    max-width:500px;
 }
 
 a  {
     cursor:pointer;
     margin-top:10px;
-
 }
 
-
 input {
-    margin:10px;
+    margin-top:15px;
     border-radius:5px;
     font-size:16px;
     color:grey;
 }
 
 button {
-    background-color:grey;
+    background-color:#735851;
     color:white;
-    border:solid 1px black;
+    border:solid 1px #735851;
     cursor:pointer;
     border-radius:5px;
+    width:120px;
+    margin-top:20px;
+    font-size:16px;
+}
+ul {
+    list-style: none;
 }
 
 li {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    list-style: none;
-    padding:3px;
+    padding-top:5px;
+    width:200px
 }
 
 #showSig {
-    margin-top:-10px;
-    display:inline-block;
-    border: solid 2px grey;
-    background-color:white;
+    border: dashed 1px #735851;
+    background-color:#F2E1AC;
 }

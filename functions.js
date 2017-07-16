@@ -27,34 +27,21 @@ function addUser(info, hash) {
 
 //check user
 function checkUser(email, enteredPassword) {
-    console.log('checkUser email and entered password', email, enteredPassword);
     return db.query("SELECT id, firstname, lastname, email, password FROM users WHERE email=$1",[email])
     .then(function(userInfo){
         userInfo=userInfo.rows[0];
         return new Promise (function(resolve,reject){
             bcrypt.compare(enteredPassword, userInfo.password, function(err,doesMatch) {
-                console.log('entered password', enteredPassword);
-                console.log('userInfo password', userInfo.password);
-                console.log('password doesMatch', doesMatch);
-                //resolve(userInfo);
+                // console.log('entered password', enteredPassword);
+                // console.log('userInfo password', userInfo.password);
+                // console.log('password doesMatch', doesMatch);
                 if (doesMatch==false) {
                     reject(console.log('reject error'));
                 } else {
                     resolve(userInfo);
                 }
-                // if (err) {
-                //     console.log('some err');
-                //     if(!doesMatch) {
-                //         console.log('no MATCH')
-                //     reject();
-                // }
-                // }
             })
         })
-    // }).catch(function(err){
-    //     console.log('some err');
-    //     console.log('there was an error checking password', err);
-        //reject();
     });
 };
 
@@ -82,25 +69,61 @@ function displaySignature(sessionId) {
 
 //show signatures
 function showSigners() {
-    //return db.query('SELECT users.firstname, users.lastname, profiles.city, profiles.age, profiles.homepage FROM users LEFT OUTER JOIN profiles ON users.id=profiles.user_id')
-//return db.query('SELECT users.firstname, users.lastname, profiles.city, profiles.age, profiles.homepage FROM users LEFT OUTER JOIN profiles ON users.id=profiles.user_id LEFT OUTER JOIN signatures ON profiles.user_id=signatures.user_id')
     return db.query('SELECT signatures.user_id, users.firstname, users.lastname, profiles.age, profiles.city, profiles.homepage FROM signatures INNER JOIN users ON users.id=signatures.user_id LEFT OUTER JOIN profiles ON profiles.user_id=signatures.user_id')
+}
+
+//count signatures to display on /signed
+function countSigners() {
+    return db.query('SELECT COUNT(*) FROM signatures')
+}
+
+function getSignersByCity(city) {
+    var query = `SELECT signatures.user_id, users.firstname, users.lastname, profiles.age, profiles.city, profiles.homepage
+    FROM signatures INNER JOIN users ON users.id=signatures.user_id
+    LEFT OUTER JOIN profiles ON profiles.user_id=signatures.user_id WHERE profiles.city=initcap('${city}')`
+    return db.query(query)
+    .catch(function(err){
+        console.log(err);
+    })
 }
 
 //delete signature
 function deleteSignature(userId) {
     console.log('something');
     return db.query('DELETE FROM signatures WHERE user_id=' + userId)
-
 }
 
+//set profile info
+function setProfile(info, userId){
+    var query = 'INSERT INTO profiles(age, city, homepage, user_id) VALUES($1, $2, $3, $4) RETURNING id';
+    var params = [info.age, info.city, info.homepage, userId];
+    return db.query(query, params)
+    .catch(function(err){
+        console.log(err);
+    })
+}
 
+function updateProfile(info, userId){
+    var queryProfile = 'UPDATE profiles SET age=$1, city=$2, homepage=$3 WHERE user_id=$4';
+    var paramsProfile = [info.age, info.city,info.homepage,userId];
+    var queryUser = 'UPDATE users SET firstname=$1, lastname=$2, email=$3 WHERE id=$4';
+    var paramsUser = [info.firstname, info.surname, info.email,userId];
+    db.query(queryUser, paramsUser)
+    .then(function(profileUpdate){
+        db.query(queryProfile, paramsProfile)
+        return(profileUpdate);
+    })
+}
 
 module.exports.hashPassword = hashPassword;
 module.exports.addUser = addUser;
 module.exports.addSignature = addSignature;
 module.exports.checkUser = checkUser;
 module.exports.displaySignature = displaySignature;
+module.exports.countSigners = countSigners;
 module.exports.showSigners = showSigners;
+module.exports.getSignersByCity = getSignersByCity;
 module.exports.deleteSignature = deleteSignature;
 module.exports.getUserInfo = getUserInfo;
+module.exports.setProfile = setProfile;
+module.exports.updateProfile = updateProfile;
