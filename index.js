@@ -13,6 +13,8 @@ const bodyParser=require('body-parser');
 // const functions=require('./functions');
 //console.log (functions);
 
+console.log(process.env.DATABASE_URL);
+
 app.use(cookieSession({
     secret:'Oranges are orange in colour',
     maxAge:1000*60*60
