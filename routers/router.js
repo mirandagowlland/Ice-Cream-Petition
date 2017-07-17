@@ -12,6 +12,7 @@ const db=spicedPg(process.env.DATABASE_URL || 'postgres:postgres:postgres@localh
 router.route ('/register')
 
     .get((req,res) => {
+        console.log('register page');
         res.render('register', {
             layout:'main',
             heading:'We care about access to ice cream in all its forms. So should you. Join our campaign to make ice cream free for all.',
