@@ -43,7 +43,6 @@ app.use('/public', express.static(__dirname + '/public'));
 app.use((req,res,next) => {
     if (!req.session.user) {
         if(req.url !='/register' && req.url != '/login') {
-            console.log('testing session');
             res.redirect('/register');
         } else {
             next();
@@ -59,4 +58,4 @@ app.use((req,res,next) => {
 
 app.use(router);
 
-app.listen(process.env.PORT || 8080, () => console.log ('listening'));
+app.listen(process.env.PORT || 8080, () => console.log ("I'm listening"));

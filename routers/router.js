@@ -12,7 +12,6 @@ const db=spicedPg(process.env.DATABASE_URL || 'postgres:postgres:postgres@localh
 router.route ('/register')
 
     .get((req,res) => {
-        console.log('register page');
         res.render('register', {
             layout:'main',
             heading:'We care about access to ice cream in all its forms. So should you. Join our campaign to make ice cream free for all.',
@@ -33,7 +32,6 @@ router.route ('/register')
                     firstname:req.body.firstname,
                     lastname:req.body.surname,
                     email:req.body.email,
-                    signed:undefined
                 }
             })
         })
@@ -80,20 +78,20 @@ router.route ('/login')
                     firstname: userInfo.firstname,
                     lastname: userInfo.lastname,
                     email: userInfo.email,
+                };
+                if (userInfo.signature) {
+                    req.session.user.signature = userInfo.id;
                 }
             }
         })
         .then(function(){
             res.redirect('/petition');
         }).catch(function(err){
-            // if(!userInfo) {
-            console.log('no match');
             res.render('login', {
                 layout:'main',
                 message: 'Login not recognised!',
                 csrfToken:req.csrfToken()
             });
-            // }
             console.log(err);
         })
     });
@@ -126,7 +124,6 @@ router.route ('/profile')
 router.route ('/profile/edit')
 
     .get ((req,res) =>  {
-        //console.log('log user info and req body', req.session.user, req.body);
         functions.getUserInfo(req.session.user.id)
         .then (function(profileInfo) {
             res.render('editprofile', {
@@ -135,9 +132,10 @@ router.route ('/profile/edit')
                 firstname:req.session.user.firstname,
                 lastname:req.session.user.lastname,
                 email:req.session.user.email,
-                age:profileInfo.age,
                 city:profileInfo.city,
-                homepage:profileInfo.homepage
+                age:profileInfo.age,
+                homepage:profileInfo.homepage,
+                profileInfo:profileInfo
             });
         }).catch(function(err) {
             console.log('err from profile get', err);
@@ -145,7 +143,6 @@ router.route ('/profile/edit')
     })
 
     .post((req,res) =>  {
-        //console.log(profileInfo);
         if (!req.body.age.length) {
             req.body.age=null;
         };
@@ -163,9 +160,11 @@ router.route ('/delete')
     .get((req,res) =>  {
         functions.deleteSignature(req.session.user.id)
         .then (function(){
+            req.session.user.signature=null;
+            res.cookie=null;
             res.redirect('/petition');
             }).catch(function(err){
-                console.log(err);
+                console.log('delete sig err', err);
             })
     })
 
@@ -173,12 +172,11 @@ router.route ('/delete')
 router.route ('/petition')
 
     .get((req,res) =>  {
-        console.log(req.session.user);
-        if (req.session.user.signed==true) {
+        if (req.session.user.signature) {
             res.redirect('/signed');
         }
         else {
-            console.log('get', req.session.user.signed);
+            console.log('get /petition log', req.session.user.signature);
             res.render('input', {
                 layout:'main',
                 heading:'A world with free ice cream is within our grasp. Give us your support today to make it a reality.',
@@ -193,9 +191,6 @@ router.route ('/petition')
     .post((req,res) =>  {
         //console.log(req.body.signature);
         if (req.body.signature) {
-            req.session.user.signed=true;
-            console.log('post full req session', req.session.user);
-            console.log('post', req.session.user.signed);
             res.cookie('petition', 'signed');
             functions.addSignature(req.body, req.session.user.id)
             .then(function(result){
@@ -218,15 +213,15 @@ router.route ('/petition')
 router.route ('/signed')
 
     .get((req,res) =>  {
-        //console.log('1', result.rows[0].signature);
+        if (!res.cookie) {
+            res.redirect('/petition');
+        }
         functions.displaySignature(req.session.user.id)
         .then(function(result){
-            console.log('pre countSigners result', result.rows[0].signature);
+            console.log('pre countSigners result', req.session.user.signature);
             var signature=result.rows[0].signature
             functions.countSigners()
             .then(function(count){
-                 console.log('this is the restul', count);
-                 console.log('sig count', result.rows[0].count);
             res.render('signed', {
                 layout:'main',
                 heading:"You've bought us one step closer to free ice cream. Your belly thanks you.",
@@ -234,23 +229,14 @@ router.route ('/signed')
                 sigCount:count.rows[0].count,
                 canvasSig:result.rows[0].signature,
                 csrfToken:req.csrfToken()
-            })
+            });
+            }).catch(function(err){
+                console.log('there was an err with the get', err);
+            });
         }).catch(function(err){
-             console.log('there was an err with the get', err);
-         });
-    })
-        // .then(function(result){
-        //     res.render('signed', {
-        //         layout:'main',
-        //         heading:"You've bought us one step closer to free ice cream. Your belly thanks you.",
-        //         sigCount:req.session.user.id,
-        //         canvasSig:result.rows[0].signature,
-        //         csrfToken:req.csrfToken()
-        //     });
-        // }).catch(function(err){
-        //     console.log(err);
-        // });
-    })
+            console.log('err in getting signed', err);
+        });
+    });
 
 
 //view signature list
@@ -272,17 +258,17 @@ router.route ('/signatures')
 router.route ('/signatures/:city')
 
     .get((req,res) => {
-        console.log('selected city', req.params)
         return functions.getSignersByCity(req.params.city)
         .then(function(signatures){
-            console.log('these are the sigs', signatures.rows)
             res.render('signaturesbycity', {
                 layout:'main',
                 sigListCity:signatures.rows,
                 city:signatures.rows[0].city
             });
-        })
-    })
+        }).catch(function(err){
+            console.log('err in city sigs', err);
+        });
+    });
 
 router.route ('/logout')
 

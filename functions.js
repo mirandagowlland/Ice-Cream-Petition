@@ -27,14 +27,11 @@ function addUser(info, hash) {
 
 //check user
 function checkUser(email, enteredPassword) {
-    return db.query("SELECT id, firstname, lastname, email, password FROM users WHERE email=$1",[email])
+    return db.query("SELECT users.id, users.firstname, users.lastname, users.email, users.password, signatures.signature, signatures.user_id FROM users FULL JOIN signatures ON users.id=signatures.user_id WHERE users.email=$1",[email])
     .then(function(userInfo){
         userInfo=userInfo.rows[0];
         return new Promise (function(resolve,reject){
             bcrypt.compare(enteredPassword, userInfo.password, function(err,doesMatch) {
-                // console.log('entered password', enteredPassword);
-                // console.log('userInfo password', userInfo.password);
-                // console.log('password doesMatch', doesMatch);
                 if (doesMatch==false) {
                     reject(console.log('reject error'));
                 } else {
@@ -83,13 +80,12 @@ function getSignersByCity(city) {
     LEFT OUTER JOIN profiles ON profiles.user_id=signatures.user_id WHERE profiles.city=initcap('${city}')`
     return db.query(query)
     .catch(function(err){
-        console.log(err);
+        console.log('err in getsignersby city function', err);
     })
 }
 
 //delete signature
 function deleteSignature(userId) {
-    console.log('something');
     return db.query('DELETE FROM signatures WHERE user_id=' + userId)
 }
 

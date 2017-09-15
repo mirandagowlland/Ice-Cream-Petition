@@ -6,7 +6,7 @@
     {{#if homepage}}<a href=http://{{homepage}} target="_blank">{{firstname}} {{lastname}}</a>
     {{else}} {{firstname}} {{lastname}}{{/if}}
     {{#if age}} ({{age}}) {{/if}}
-    {{#if city}}, <a href="/signatures/{{city}}"> {{city}} {{/if}}</a>
+    {{#if city}} <a href="/signatures/{{city}}" value="{{city}}"> {{city}} {{/if}}</a>
 </li><br>
 {{/each}}
 </ul>

@@ -1,4 +1,4 @@
-console.log('YO YO YO');
+//console.log('YO YO YO');
 
 const canvas = document.getElementById("signature");
 const context = canvas.getContext("2d");
@@ -15,6 +15,6 @@ $('#signature').on('mousedown', function(e){
         $('#signature').off('mousemove');
         $('input[name="signature"]').val(canvas.toDataURL());
 
-        console.log(canvas.toDataURL('image/png'));
+        //console.log(canvas.toDataURL('image/png'));
     });
 })
